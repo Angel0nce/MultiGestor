@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestor Multifuncional{% endblock %}</title>
+    
+    <!-- Bootstrap + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+</head>
+<body>
+    <!-- Botón para colapsar el menú -->
+    <button id="toggleSidebar" class="btn btn-dark position-fixed top-0 start-0 m-2 z-3">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Sidebar Expandible -->
+    <div id="sidebar" class="sidebar expanded">
+        <h2 class="sidebar-title">Gestor Multifuncional</h2>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('Inventario.Principal') }}">
+                    <i class="bi bi-boxes"></i> <span>Inventario</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="#">
+                    <i class="fas fa-box"></i> <span>Pedidos (Próximamente)</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('Ventas.PrincipalV') }}">
+                    <i class="bi bi-currency-dollar"></i> <span>Ventas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('Reportes.Reportes1') }}">
+                    <i class="bi bi-bar-chart"></i> <span>Reportes</span>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-gear"></i> <span>Opciones</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="/ajustes"><i class="bi bi-sliders"></i> Ajustes</a></li>
+                    <li><a class="dropdown-item" href="/ayuda"><i class="bi bi-question-circle"></i> Ayuda</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Contenido principal -->
+    <main id="mainContent" class="content">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info" role="alert">
+                    {% for message in messages %}{{ message }}{% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% block body %}{% endblock %}
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('mainContent');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('expanded-content');
+        });
+    </script>
+
+    <!-- Estilos -->
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            padding-top: 3.5rem;
+            transition: width 0.3s;
+            z-index: 1;
+        }
+
+        .sidebar-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar .nav-link {
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar.collapsed .sidebar-title,
+        .sidebar.collapsed .nav-link span {
+            display: none;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 2rem;
+            width: 100%;
+            transition: margin-left 0.3s;
+        }
+
+        .expanded-content {
+            margin-left: 70px !important;
+        }
+
+        #toggleSidebar {
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar .sidebar-title,
+            .sidebar .nav-link span {
+                display: none;
+            }
+
+            .content {
+                margin-left: 70px;
+            }
+        }
+    </style>
+</body>
+</html>

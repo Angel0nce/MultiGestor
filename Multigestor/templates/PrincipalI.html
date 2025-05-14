@@ -1,0 +1,84 @@
+{% extends 'Layout.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="text-primary">Inventario</h3>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('Inventario.ADD') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Agregar Producto
+            </a>
+            <a href="{{ url_for('Inventario.CARGAR') }}" class="btn btn-info">
+                <i class="fas fa-file-excel"></i> Cargar Excel
+            </a>
+            <a href="{{ url_for('Inventario.cargar_factura') }}" class="btn btn-warning">
+                <i class="fas fa-file-pdf"></i> Cargar PDF
+            </a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card shadow">
+        <div class="card-body">
+            {% if Inventarios %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Imagen</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in Inventarios %}
+                        <tr>
+                            <td>{{ producto[6] }}</td>
+                            <td>{{ producto[1] }}</td>
+                            <td>{{ producto[4] }}</td> <!-- Ajuste de índice -->
+                            <td>{{ producto[2] }}</td>
+                            <td>Q {{ '%.2f' % producto[3] }}</td> <!-- Corrección de precio -->
+                            <td>
+                                {% if producto[5] %}
+                                    <img src="data:image/jpeg;base64,{{ producto[5] }}"
+                                         class="img-thumbnail" width="60">
+                                {% else %}
+                                    <span class="text-muted">Sin imagen</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('Inventario.EDIT', id=producto[0]) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('Inventario.deleteP', id=producto[0]) }}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('¿Estás seguro de eliminar este producto?')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="text-center text-muted">No hay productos registrados.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'Layout.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4"> {{ titulo_modulo }}</h2>
+
+    {% if pedidos %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Grupo ID</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set grupo_anterior = None %}
+                {% set grupo_conteo = namespace(data={}) %}
+
+                {% for pedido in pedidos %}
+                    {% set grupo_id = pedido[6] %}
+                    {% set grupo_conteo.data[grupo_id] = grupo_conteo.data.get(grupo_id, 0) + 1 %}
+                {% endfor %}
+
+                {% for pedido in pedidos %}
+                    {% set grupo_id = pedido[6] %}
+                    {% set is_grande = grupo_conteo.data[grupo_id] > 1 %}
+                    <tr class="{% if is_grande %}table-warning{% endif %}">
+                        <td>
+                            {% if grupo_id != grupo_anterior %}
+                                <strong>{{ grupo_id }}</strong>
+                                {% set grupo_anterior = grupo_id %}
+                            {% endif %}
+                        </td>
+                        <td>{{ pedido[1] }}</td>
+                        <td>{{ pedido[2] }}</td>
+                        <td>{{ pedido[4] }}</td>
+                        <td>{{ pedido[5] }}</td>
+                        <td>
+                            <a href="{{ url_for('Ventas.marcar_hecho', id=pedido[0]) }}"
+                               class="btn btn-success btn-sm">
+                               Hecho!
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center">No hay órdenes registradas.</p>
+    {% endif %}
+</div>
+{% endblock %}

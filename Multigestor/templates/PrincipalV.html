@@ -1,0 +1,54 @@
+{% extends 'Layout.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="text-primary">Inventario Disponible</h3>
+        <a href="{{ url_for('Ventas.ORD') }}" class="btn btn-success">
+            <i class="fas fa-shopping-cart"></i> Generar Orden
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card shadow">
+        <div class="card-body">
+            {% if Inventarios and Inventarios|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID Producto</th>
+                            <th>Nombre</th>
+                            <th>Cantidad Disponible</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in Inventarios %}
+                        <tr>
+                            <td>{{ producto[0] }}</td>
+                            <td>{{ producto[1] }}</td>
+                            <td>{{ producto[2] }}</td>
+                            <td>Q {{ '%.2f' % producto[3] }}</td>
+                            <td>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="text-center text-muted">No hay productos disponibles en el inventario.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

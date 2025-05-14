@@ -1,0 +1,64 @@
+{% extends 'Layout.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="text-center">Gestor de Órdenes</h1>
+
+    <!-- Mensajes Flash -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Formulario de Pedido -->
+    <form action="{{ url_for('Ventas.ORD') }}" method="POST">
+        <div class="mb-3">
+            <label for="cliente" class="form-label">Nombre del Cliente:</label>
+            <input type="text" name="cliente" class="form-control" required>
+        </div>
+
+        <h2 class="mt-4">Productos Disponibles</h2>
+        {% if productos and productos|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Seleccionar</th>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="producto_id[]" value="{{ producto[0] }}">
+                        </td>
+                        <td>{{ producto[1] }}</td>
+                        <td>Q {{ '%.2f' % producto[2] }}</td>
+                        <td>
+                            <input type="number" name="cantidad[]" min="1" value="1" class="form-control">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="text-center text-muted">No hay productos disponibles.</p>
+        {% endif %}
+
+        <button type="submit" class="btn btn-success mt-3">Generar Pedido</button>
+    </form>
+</div>
+{% endblock %}
+

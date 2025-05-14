@@ -1,0 +1,76 @@
+{% extends 'Layout.html' %}  <!-- Corrección en el nombre del archivo base -->
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Cargar Factura en PDF</h5>
+                    <a href="{{ url_for('Inventario.Principal') }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-arrow-left"></i> Regresar
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form id="formPDF" method="POST" action="{{ url_for('Inventario.cargar_factura') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="archivo" class="form-label">Seleccione un archivo (.pdf):</label>
+                            <input type="file" id="archivo" name="archivo" class="form-control" accept=".pdf" required>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-file-upload"></i> Cargar Factura
+                            </button>
+                        </div>
+
+                        <!-- Barra de progreso -->
+                        <div id="progressContainer" style="display: none;">
+                            <label>Cargando archivo...</label>
+                            <div class="progress">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                                     role="progressbar" style="width: 0%">0%</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script de carga -->
+<script>
+    document.getElementById('formPDF').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+
+        progressContainer.style.display = 'block';
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 5;
+            if (progress > 100) progress = 100;
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = progress + '%';
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                e.target.submit(); // Enviar formulario real
+            }
+        }, 100);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'Layout.html' %} 
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Reportes de Ventas</h2>
+
+    <!-- Productos más vendidos -->
+    <h4>Productos más vendidos</h4>
+    <ul>
+        {% for p in productos %}
+        <li>{{ p.nombre }}: {{ p.total_vendido }} unidades</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Día más productivo -->
+    <h4>Día más productivo</h4>
+    {% if dia_max %}
+    <p>{{ dia_max.dia }}: {{ dia_max.total_vendido }} productos vendidos</p>
+    {% else %}
+    <p>No hay datos disponibles</p>
+    {% endif %}
+
+    <!-- Día menos productivo -->
+    <h4>Día menos productivo</h4>
+    {% if dia_min %}
+    <p>{{ dia_min.dia }}: {{ dia_min.total_vendido }} productos vendidos</p>
+    {% else %}
+    <p>No hay datos disponibles</p>
+    {% endif %}
+
+    <!-- Gráfica de Ventas por Día -->
+    <h4>Ventas por Día</h4>
+    <canvas id="ventasPorDia" width="400" height="200"></canvas>
+
+    <!-- Datos para el gráfico -->
+    <script id="ventas-labels" type="application/json">
+        {{ ventas_dias | map(attribute='dia') | list | tojson }}
+    </script>
+    <script id="ventas-data" type="application/json">
+        {{ ventas_dias | map(attribute='total_vendido') | list | tojson }}
+    </script>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
